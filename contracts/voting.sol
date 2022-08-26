@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-contract VotingContact{
+contract VotingContact {
 
     address owner;
    // uint ID;
@@ -17,8 +17,7 @@ contract VotingContact{
         _;
     } 
 
-
-    address [] public eligibleVoters;
+    address[] public eligibleVoters;
 
     mapping(uint => POLL) pollTrack;
 
@@ -35,23 +34,22 @@ contract VotingContact{
         
     }
 
-    function checkEligibility(address voter) internal {
+    function checkEligibility(address voter) internal view returns(bool status) {
         for(uint i=0; i <eligibleVoters.length; i++){
-            if(msg.sender == eligibleVoters[i]) {
-             //   revert("Not an eligible voter");
+            if(voter == eligibleVoters[i]) {
+                status = true;
+            } else {
+                status = false;
             }
         }
     }
 
     function placeVote(uint ID) public {
         require(msg.sender != address(0), "Invalid address");
+        require(checkEligibility(msg.sender), "Not eligible to vote");
 
         POLL storage votepoll = pollTrack[ID];
-        // votepoll.count = Count;
-        // Count  += 1;
-
-        
-
+        votepoll.count++;
     }
 
     function getVote(uint _id) public view returns(POLL memory){
