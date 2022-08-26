@@ -2,12 +2,12 @@
 pragma solidity ^0.8.7;
 
 contract VotingContact{
-    uint ID = 1;
+
     address owner;
+   // uint ID;
 
     struct POLL{
-        //uint Id;
-        string pollTitle;
+        uint count;
         uint durationForVoting;
         string candidates;
     }
@@ -20,40 +20,42 @@ contract VotingContact{
 
     address [] public eligibleVoters;
 
-    mapping(uint => POLL) pollTracking;
+    mapping(uint => POLL) pollTrack;
 
     function addEligibleVoters(address voters) public OnlyOwner{
         eligibleVoters.push(voters);
     }
 
-    function createPoll(string memory _pollTitle, uint _pollTiming, string memory _pollCandidates) public {
-        POLL storage voteContent = pollTracking[ID];
+    function createPoll(uint _pollTiming, string memory _pollCandidates, uint ID) public {
+        POLL storage votepoll = pollTrack[ID];
         //voteContent.Id = ID;
-        voteContent.pollTitle = _pollTitle;
-        voteContent.durationForVoting = _pollTiming;
-        voteContent.candidates = _pollCandidates;
-        //voteContent.inputs = _inputs;
-        ID++;
+        votepoll.durationForVoting = _pollTiming + block.timestamp;
+        votepoll.candidates = _pollCandidates;
+        
+        
     }
 
-    function checkEligibility() public view returns(bool status) {
+    function checkEligibility(address voter) internal {
         for(uint i=0; i <eligibleVoters.length; i++){
             if(msg.sender == eligibleVoters[i]) {
-                status = true;
-            } else {
-                status = false;            }
-            // require(msg.sender[i]);
+             //   revert("Not an eligible voter");
+            }
         }
     }
 
-    // function placeVote() public{
-    //     require(msg.sender != address(0), "Invalid address")
-    //     //require(msg.sender )
+    function placeVote(uint ID) public {
+        require(msg.sender != address(0), "Invalid address");
 
-    // }
+        POLL storage votepoll = pollTrack[ID];
+        // votepoll.count = Count;
+        // Count  += 1;
+
+        
+
+    }
 
     function getVote(uint _id) public view returns(POLL memory){
        // POLL storage voteContent = pollsTracking[ID];
-        return pollTracking[_id];
+        return pollTrack[_id];
     }
 }
